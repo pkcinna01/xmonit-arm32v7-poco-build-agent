@@ -1,4 +1,11 @@
+FROM alpine AS builder
+
+ENV QEMU_URL https://github.com/multiarch/qemu-user-static/releases/download/v4.1.0-1/qemu-arm-static.tar.gz
+RUN apk add curl && curl -L ${QEMU_URL} | tar zxvf - -C . --strip-components 1
+
 FROM arm32v7/ubuntu:disco
+
+COPY --from=builder qemu-arm-static /usr/bin
 
 RUN apt-get -y update
 RUN apt-get -y upgrade
