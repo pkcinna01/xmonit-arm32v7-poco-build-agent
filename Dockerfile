@@ -28,11 +28,11 @@ RUN cmake -DCMAKE_BUILD_TYPE=Debug ..
 RUN make install
 
 RUN rm -rf /src/poco/cmake-build/*
-RUN cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release ..
+RUN cmake -DPOCO_STATIC=1 -DCMAKE_BUILD_TYPE=Release ..
 RUN make install
 
 RUN rm -rf /src/poco/cmake-build/*
-RUN cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Debug ..
+RUN cmake -DPOCO_STATIC=1 -DCMAKE_BUILD_TYPE=Debug ..
 RUN make install
 
 RUN rm -rf /src/poco/cmake-build
@@ -40,21 +40,26 @@ RUN rm -rf /src/poco/cmake-build
 # Include Prometheus here for now (needed by solar-power-mgr app)
 RUN apt-get -y install zlib1g-dev libcurl4-openssl-dev
 
-RUN cd / && git clone https://github.com/jupp0r/prometheus-cpp.git
+RUN cd /src && git clone https://github.com/jupp0r/prometheus-cpp.git
 
 WORKDIR /src/prometheus-cpp
 RUN git submodule init && git submodule update
 RUN mkdir /src/prometheus-cpp/build
 
 WORKDIR /src/prometheus-cpp/build
-RUN cmake .. -DBUILD_SHARED_LIBS=ON
-RUN make -j 4
+RUN cmake .. -DBUILD_SHARED_LIBS=ON -DENABLE_TESTING=OFF
+RUN make -j 
+#RUN ctest -v
 RUN make install
 
 RUN rm -rf /src/prometheus-cpp/build/*
-RUN cmake .. -DBUILD_SHARED_LIBS=OFF
-RUN make -j 4
-RUN make install
+RUN cmake .. -DBUILD_SHARED_LIBS=OFF -DENABLE_TESTING=OFF
+RUN make -j
+#RUN ctest -v
+RUN make clean install
 
 RUN rm -rf /src/prometheus-cpp/build
+
+WORKDIR /
+
 
