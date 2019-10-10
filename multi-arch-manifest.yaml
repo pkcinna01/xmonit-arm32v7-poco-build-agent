@@ -1,0 +1,11 @@
+image: xmonit/poco-build-agent:latest
+manifests:
+  - image: xmonit/poco-build-agent:amd64
+    platform:
+      architecture: amd64
+      os: linux
+  - image: xmonit/poco-build-agent:arm32v7
+    platform:
+      architecture: arm
+      os: linux
+      variant: v7
